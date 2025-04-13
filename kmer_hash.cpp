@@ -17,13 +17,6 @@
 int main(int argc, char** argv) {
     upcxx::init();
 
-    // TODO: Dear Students,
-    // Please remove this if statement, when you start writing your parallel implementation.
-    if (upcxx::rank_n() > 1) {
-        throw std::runtime_error("Error: parallel implementation not started yet!"
-                                 " (remove this when you start working.)");
-    }
-
     if (argc < 2) {
         BUtil::print("usage: srun -N nodes -n ranks ./kmer_hash kmer_file [verbose|test [prefix]]\n");
         upcxx::finalize();
@@ -72,6 +65,7 @@ int main(int argc, char** argv) {
 
     auto start = std::chrono::high_resolution_clock::now();
 
+    // INSERT //
     std::vector<kmer_pair> start_nodes;
 
     for (auto& kmer : kmers) {
@@ -95,6 +89,7 @@ int main(int argc, char** argv) {
 
     auto start_read = std::chrono::high_resolution_clock::now();
 
+    // TRAVERSE //
     std::list<std::list<kmer_pair>> contigs;
     for (const auto& start_kmer : start_nodes) {
         std::list<kmer_pair> contig;
@@ -141,6 +136,7 @@ int main(int argc, char** argv) {
         fout.close();
     }
 
+    hashmap.atomic_flags.destroy();
     upcxx::finalize();
     return 0;
 }
